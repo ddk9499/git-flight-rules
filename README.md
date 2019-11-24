@@ -1,11 +1,11 @@
 # Flight rules for Git
 
 🌍
-*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)*
+*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)  ∙  [Tiếng Việt](README_vi.md) ∙ [Français](README_fr.md)*
 
 #### What are "flight rules"?
 
-A [guide for astronauts](https://www.jsc.nasa.gov/news/columbia/fr_generic.pdf) (now, programmers using Git) about what to do when things go wrong.
+A guide for astronauts (now, programmers using Git) about what to do when things go wrong.
 
 >  *Flight Rules* are the hard-earned body of knowledge recorded in manuals that list, step-by-step, what to do if X occurs, and why. Essentially, they are extremely detailed, scenario-specific standard operating procedures. [...]
 
@@ -27,6 +27,10 @@ All commands should work for at least git version 2.13.0. See the [git website](
   - [Repositories](#repositories)
     - [I want to start a local repository](#i-want-to-start-a-local-repository)
     - [I want to clone a remote repository](#i-want-to-clone-a-remote-repository)
+    - [I set the wrong remote repository](#i-set-the-wrong-remote-repository)
+    - [I want to add code to someone else's repository](#i-want-to-add-code-to-someone-elses-repository)
+      - [Suggesting code via pull requests](#suggesting-code-via-pull-requests)
+      - [I need to update my fork with latest updates from the original repository](#i-need-to-update-my-fork-with-latest-updates-from-the-original-repository)
   - [Editing Commits](#editing-commits)
     - [What did I just commit?](#what-did-i-just-commit)
     - [I wrote the wrong thing in a commit message](#i-wrote-the-wrong-thing-in-a-commit-message)
@@ -38,10 +42,18 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [I accidentally did a hard reset, and I want my changes back](#i-accidentally-did-a-hard-reset-and-i-want-my-changes-back)
     - [I accidentally committed and pushed a merge](#i-accidentally-committed-and-pushed-a-merge)
     - [I accidentally committed and pushed files containing sensitive data](#i-accidentally-committed-and-pushed-files-containing-sensitive-data)
+    - [I want to remove a large file from ever existing in repo history](#i-want-to-remove-a-large-file-from-ever-existing-in-repo-history)
+      - [Recommended Technique: Use third-party bfg](#recommended-technique-use-third-party-bfg)
+      - [Built-in Technique: Use git-filter-branch](#built-in-technique-use-git-filter-branch)
+      - [Final Step: Pushing your changed repo history](#final-step-pushing-your-changed-repo-history)
+    - [I need to change the content of a commit which is not my last](#i-need-to-change-the-content-of-a-commit-which-is-not-my-last)
   - [Staging](#staging)
+    - [I want to stage all tracked files and leave untracked files](#i-want-to-stage-all-tracked-files-and-leave-untracked-files)
+      - [To stage part of tracked files](#to-stage-part-of-tracked-files)
     - [I need to add staged changes to the previous commit](#i-need-to-add-staged-changes-to-the-previous-commit)
     - [I want to stage part of a new file, but not the whole file](#i-want-to-stage-part-of-a-new-file-but-not-the-whole-file)
     - [I want to add changes in one file to two different commits](#i-want-to-add-changes-in-one-file-to-two-different-commits)
+    - [I staged too many edits, and I want to break them out into a separate commit](#i-staged-too-many-edits-and-i-want-to-break-them-out-into-a-separate-commit)
     - [I want to stage my unstaged edits, and unstage my staged edits](#i-want-to-stage-my-unstaged-edits-and-unstage-my-staged-edits)
   - [Unstaged Edits](#unstaged-edits)
     - [I want to move my unstaged edits to a new branch](#i-want-to-move-my-unstaged-edits-to-a-new-branch)
@@ -51,6 +63,7 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [I want to discard specific unstaged files](#i-want-to-discard-specific-unstaged-files)
     - [I want to discard only my unstaged local changes](#i-want-to-discard-only-my-unstaged-local-changes)
     - [I want to discard all of my untracked files](#i-want-to-discard-all-of-my-untracked-files)
+    - [I want to unstage a specific staged file](#i-want-to-unstage-a-specific-staged-file)
   - [Branches](#branches)
     - [I want to list all branches](#i-want-to-list-all-branches)
     - [Create a branch from a commit](#create-a-branch-from-a-commit)
@@ -87,15 +100,18 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [Stash specific files](#stash-specific-files)
     - [Stash with message](#stash-with-message)
     - [Apply a specific stash from list](#apply-a-specific-stash-from-list)
+    - [Stash while keeping unstaged edits](#stash-while-keeping-unstaged-edits)
   - [Finding](#finding)
     - [I want to find a string in any commit](#i-want-to-find-a-string-in-any-commit)
     - [I want to find by author/committer](#i-want-to-find-by-authorcommitter)
     - [I want to list commits containing specific files](#i-want-to-list-commits-containing-specific-files)
+    - [I want to view the commit history for a specific function](#i-want-to-view-the-commit-history-for-a-specific-function)
     - [Find a tag where a commit is referenced](#find-a-tag-where-a-commit-is-referenced)
   - [Submodules](#submodules)
     - [Clone all submodules](#clone-all-submodules)
     - [Remove a submodule](#remove-a-submodule)
   - [Miscellaneous Objects](#miscellaneous-objects)
+    - [Copy a folder or file from one branch to another](#copy-a-folder-or-file-from-one-branch-to-another)
     - [Restore a deleted file](#restore-a-deleted-file)
     - [Delete tag](#delete-tag)
     - [Recover a deleted tag](#recover-a-deleted-tag)
@@ -109,6 +125,7 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [I want to revert a file to a specific revision](#i-want-to-revert-a-file-to-a-specific-revision)
     - [I want to list changes of a specific file between commits or branches](#i-want-to-list-changes-of-a-specific-file-between-commits-or-branches)
     - [I want Git to ignore changes to a specific file](#i-want-git-to-ignore-changes-to-a-specific-file)
+  - [Debugging with Git](#debugging-with-git)
   - [Configuration](#configuration)
     - [I want to add aliases for some Git commands](#i-want-to-add-aliases-for-some-git-commands)
     - [I want to add an empty directory to my repository](#i-want-to-add-an-empty-directory-to-my-repository)
@@ -117,6 +134,9 @@ All commands should work for at least git version 2.13.0. See the [git website](
     - [I want to set a global user](#i-want-to-set-a-global-user)
     - [I want to add command line coloring for Git](#i-want-to-add-command-line-coloring-for-git)
   - [I've no idea what I did wrong](#ive-no-idea-what-i-did-wrong)
+  - [Git Shortcuts](#git-shortcuts)
+    - [Git Bash](#git-bash)
+    - [PowerShell on Windows](#powershell-on-windows)
 - [Other Resources](#other-resources)
   - [Books](#books)
   - [Tutorials](#tutorials)
@@ -137,18 +157,105 @@ To initialize an existing directory as a Git repository:
 
 ### I want to clone a remote repository
 
-To clone (copy) a remote repository, copy the url for the repository, and run:
+To clone (copy) a remote repository, copy the URL for the repository, and run:
 
 ```sh
 $ git clone [url]
 ```
 
-This will save it to a folder named the same as the remote repository's. Make sure you have connection to the remote server you are cloning from (for most purposes this means making sure you are connected to the internet).
+This will save it to a folder named the same as the remote repository's. Make sure you have a connection to the remote server you are cloning from (for most purposes this means making sure you are connected to the internet).
 
 To clone it into a folder with a different name than the default repository name:
 
 ```sh
 $ git clone [url] name-of-new-folder
+```
+
+### I set the wrong remote repository
+
+There are a few possible problems here:
+
+If you cloned the wrong repository, simply delete the directory created after running `git clone` and clone the correct repository.
+
+If you set the wrong repository as the origin of an existing local repository, change the URL of your origin by running:
+
+```sh
+$ git remote set-url origin [url of the actual repo]
+```
+
+For more, see [this StackOverflow topic](https://stackoverflow.com/questions/2432764/how-to-change-the-uri-url-for-a-remote-git-repository#2432799).
+
+
+### I want to add code to someone else's repository
+
+Git doesn't allow you to add code to someone else's repository without access rights. Neither does GitHub, which is not the same as Git, but rather a hosted service for Git repositories. However, you can suggest code using patches, or, on GitHub, forks and pull requests.
+
+First, a bit about forking. A fork is a copy of a repository. It is not a git operation, but is a common action on GitHub, Bitbucket, GitLab — or anywhere people host Git repositories. You can fork a repository through the hosted UI.
+
+#### Suggesting code via pull requests
+
+After you've forked a repository, you normally need to clone the repository to your machine. You can do some small edits on GitHub, for instance, without cloning, but this isn't a github-flight-rules list, so let's go with how to do this locally.
+
+```sh
+# if you are using ssh
+$ git clone git@github.com:k88hudson/git-flight-rules.git
+
+# if you are using https
+$ git clone https://github.com/k88hudson/git-flight-rules.git
+```
+
+If you `cd` into the resulting directory, and type `git remote`, you'll see a list of the remotes. Normally there will be one remote - `origin` - which will point to `k88hudson/git-flight-rules`. In this case, we also want a remote that will point to your fork.
+
+First, to follow a Git convention, we normally use the remote name `origin` for your own repository and `upstream` for whatever you've forked. So, rename the `origin` remote to `upstream`
+
+```sh
+$ git remote rename origin upstream
+```
+
+You can also do this using `git remote set-url`, but it takes longer and is more steps.
+
+Then, set up a new remote that points to your project.
+
+```sh
+$ git remote add origin git@github.com:YourName/git-flight-rules.git
+```
+
+Note that now you have two remotes.
+
+- `origin` references your own repository.
+- `upstream` references the original one.
+
+From origin, you can read and write. From upstream, you can only read.
+
+When you've finished making whatever changes you like, push your changes (normally in a branch) to the remote named `origin`. If you're on a branch, you could use `--set-upstream` to avoid specifying the remote tracking branch on every future push using this branch. For instance:
+
+```sh
+$ (feature/my-feature) git push --set-upstream origin feature/my-feature
+```
+
+There is no way to suggest a pull request using the CLI using Git (although there are tools, like [hub](http://github.com/github/hub), which will do this for you). So, if you're ready to make a pull request, go to your GitHub (or another Git host) and create a new pull request. Note that your host automatically links the original and forked repositories.
+
+After all of this, do not forget to respond to any code review feedback.
+
+#### I need to update my fork with latest updates from the original repository
+
+After a while, the `upstream` repository may have been updated, and these updates need to be pulled into your `origin` repo. Remember that like you, other people are contributing too. Suppose that you are in your own feature branch and you need to update it with the original repository updates.
+
+You probably have set up a remote that points to the original project. If not, do this now. Generally we use `upstream` as a remote name:
+
+```sh
+$ (master) git remote add upstream <link-to-original-repository>
+# $ (master) git remote add upstream git@github.com:k88hudson/git-flight-rules.git
+```
+
+Now you can fetch from upstream and get the latest updates.
+
+```sh
+$ (master) git fetch upstream
+$ (master) git merge upstream/master
+
+# or using a single command
+$ (master) git pull upstream master
 ```
 
 ## Editing Commits
@@ -181,6 +288,7 @@ If you wrote the wrong thing and the commit has not yet been pushed, you can do 
 ```sh
 $ git commit --amend --only
 ```
+
 This will open your default text editor, where you can edit the message. On the other hand, you can do this all in one command:
 
 ```sh
@@ -314,7 +422,7 @@ Note: the parent number is not a commit identifier. Rather, a merge commit has a
 <a href="undo-sensitive-commit-push"></a>
 ### I accidentally committed and pushed files containing sensitive data
 
-If you accidentally pushed files containing sensitive data (passwords, keys, etc.), you can amend the previous commit. Keep in mind that once you have pushed a commit, you should consider any data it contains to be compromised. These steps can remove the sensitive data from your public repo or your local copy, but you **cannot** remove the sensitive data from other people's pulled copies. If you committed a password, **change it immediately**. If you committed a key, **re-generate it immediately**. Amending the pushed commit is not enough, since anyone could have pulled the original commit containing your sensitive data in the meantime. 
+If you accidentally pushed files containing sensitive, or private data (passwords, keys, etc.), you can amend the previous commit. Keep in mind that once you have pushed a commit, you should consider any data it contains to be compromised. These steps can remove the sensitive data from your public repo or your local copy, but you **cannot** remove the sensitive data from other people's pulled copies. If you committed a password, **change it immediately**. If you committed a key, **re-generate it immediately**. Amending the pushed commit is not enough, since anyone could have pulled the original commit containing your sensitive data in the meantime.
 
 If you edit the file and remove the sensitive data, then run
 ```sh
@@ -340,9 +448,139 @@ If you want to completely remove an entire file (and not keep it locally), then 
 (feature-branch)$ git push --force-with-lease origin [branch]
 ```
 
-If you have made other commits in the meantime (i.e. the sensitive data is in a commit before the previous commit), you will have to rebase. 
+If you have made other commits in the meantime (i.e. the sensitive data is in a commit before the previous commit), you will have to rebase.
+
+<a href="#i-want-to-remove-a-large-file-from-ever-existing-in-repo-history"></a>
+### I want to remove a large file from ever existing in repo history
+
+If the file you want to delete is secret or sensitive, instead see [how to remove sensitive files](#i-accidentally-committed-and-pushed-files-containing-sensitive-data).
+
+Even if you delete a large or unwanted file in a recent commit, it still exists in git history, in your repo's `.git` folder, and will make `git clone` download unneeded files.
+
+The actions in this part of the guide will require a force push, and rewrite large sections of repo history, so if you are working with remote collaborators, check first that any local work of theirs is pushed.
+
+There are two options for rewriting history, the built-in `git-filter-branch` or [`bfg-repo-cleaner`](https://rtyley.github.io/bfg-repo-cleaner/). `bfg` is significantly cleaner and more performant, but it is a third-party download and requires java. We will describe both alternatives. The final step is to force push your changes, which requires special consideration on top of a regular force push, given that a great deal of repo history will have been permanently changed.
+
+#### Recommended Technique: Use third-party bfg
+
+Using bfg-repo-cleaner requires java. Download the bfg jar from the link [here](https://rtyley.github.io/bfg-repo-cleaner/). Our examples will use `bfg.jar`, but your download may have a version number, e.g. `bfg-1.13.0.jar`.
+
+To delete a specific file.
+```sh
+(master)$ git rm path/to/filetoremove
+(master)$ git commit -m "Commit removing filetoremove"
+(master)$ java -jar ~/Downloads/bfg.jar --delete-files filetoremove
+```
+Note that in bfg you must use the plain file name even if it is in a subdirectory.
+
+You can also delete a file by pattern, e.g.:
+```sh
+(master)$ git rm *.jpg
+(master)$ git commit -m "Commit removing *.jpg"
+(master)$ java -jar ~/Downloads/bfg.jar --delete-files *.jpg
+```
+
+With bfg, the files that exist on your latest commit will not be affected. For example, if you had several large .tga files in your repo, and then in an earlier commit, you deleted a subset of them, this call does not touch files present in the latest commit
+
+Note, if you renamed a file as part of a commit, e.g. if it started as `LargeFileFirstName.mp4` and a commit changed it to `LargeFileSecondName.mp4`, running `java -jar ~/Downloads/bfg.jar --delete-files LargeFileSecondName.mp4` will not remove it from git history. Either run the `--delete-files` command with both filenames, or with a matching pattern.
+
+#### Built-in Technique: Use git-filter-branch
+
+`git-filter-branch` is more cumbersome and has less features, but you may use it if you cannot install or run `bfg`.
+
+In the below, replace `filepattern` may be a specific name or pattern, e.g. `*.jpg`. This will remove files matching the pattern from all history and branches.
+
+```sh
+(master)$ git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch filepattern' --prune-empty --tag-name-filter cat -- --all
+```
+
+Behind-the-scenes explanation:
+
+`--tag-name-filter cat` is a cumbersome, but simplest, way to apply the original tags to the new commits, using the command cat.
+
+`--prune-empty` removes any now-empty commits.
+
+#### Final Step: Pushing your changed repo history
+
+Once you have removed your desired files, test carefully that you haven't broken anything in your repo - if you have, it is easiest to re-clone your repo to start over.
+To finish, optionally use git garbage collection to minimize your local .git folder size, and then force push.
+```sh
+(master)$ git reflog expire --expire=now --all && git gc --prune=now --aggressive
+(master)$ git push origin --force --tags
+```
+
+Since you just rewrote the entire git repo history, the `git push` operation may be too large, and return the error `“The remote end hung up unexpectedly”`. If this happens, you can try increasing the git post buffer:
+```sh
+(master)$ git config http.postBuffer 524288000
+(master)$ git push --force
+```
+
+If this does not work, you will need to manually push the repo history in chunks of commits. In the command below, try increasing `<number>` until the push operation succeeds.
+```sh
+(master)$ git push -u origin HEAD~<number>:refs/head/master --force
+```
+Once the push operation succeeds the first time, decrease `<number>` gradually until a conventional `git push` succeeds.
+
+<a href="i-need-to-change-the-content-of-a-commit-which-is-not-my-last"></a>
+### I need to change the content of a commit which is not my last
+
+Consider you created some (e.g. three) commits and later realize you missed doing something that belongs contextually into the first of those commits. This bothers you, because if you'd create a new commit containing those changes, you'd have a clean code base, but your commits weren't atomic (i.e. changes that belonged to each other weren't in the same commit). In such a situation you may want to change the commit where these changes belong to, include them and have the following commits unaltered. In such a case, `git rebase` might save you.
+
+Consider a situation where you want to change the third last commit you made.
+
+```sh
+(your-branch)$ git rebase -i HEAD~4
+```
+
+gets you into interactive rebase mode, which allows you to edit any of your last three commits. A text editor pops up, showing you something like
+
+```sh
+pick 9e1d264 The third last commit
+pick 4b6e19a The second to last commit
+pick f4037ec The last commit
+```
+
+which you change into
+
+```sh
+edit 9e1d264 The third last commit
+pick 4b6e19a The second to last commit
+pick f4037ec The last commit
+```
+
+This tells rebase that you want to edit your third last commit and keep the other two unaltered. Then you'll save (and close) the editor. Git will then start to rebase. It stops on the commit you want to alter, giving you the chance to edit that commit. Now you can apply the changes which you missed applying when you initially committed that commit. You do so by editing and staging them. Afterwards you'll run
+
+```sh
+(your-branch)$ git commit --amend
+```
+
+which tells Git to recreate the commit, but to leave the commit message unedited. Having done that, the hard part is solved.
+
+```sh
+(your-branch)$ git rebase --continue
+```
+
+will do the rest of the work for you.
 
 ## Staging
+
+<a href="#i-want-to-stage-all-tracked-files-and-leave-untracked-files"></a>
+
+### I want to stage all tracked files and leave untracked files
+
+```sh
+$ git add -u
+```
+
+#### To stage part of tracked files
+
+```sh
+# to stage files with ext .txt
+$ git add -u *.txt
+
+# to stage all files inside directory src
+$ git add -u src/
+```
 
 <a href="#i-need-to-add-staged-changes-to-the-previous-commit"></a>
 ### I need to add staged changes to the previous commit
@@ -381,17 +619,26 @@ Then, you will need to use the `e` option to manually choose which lines to add.
 
 `git add` will add the entire file to a commit. `git add -p` will allow to interactively select which changes you want to add.
 
+<a href="selective-unstage-edits"></a>
+### I staged too many edits, and I want to break them out into a separate commit
+
+`git reset -p` will open a patch mode reset dialog.  This is similar to `git add -p`, except that selecting "yes" will unstage the change, removing it from the upcoming commit.
+
 <a href="unstaging-edits-and-staging-the-unstaged"></a>
 ### I want to stage my unstaged edits, and unstage my staged edits
 
-This is tricky. The best I figure is that you should stash your unstaged edits. Then, reset. After that, pop your stashed edits back, and add them.
+In many cases, you should unstage all of your staged files and then pick the file you want and commit it. However, if you want to switch the staged and unstaged edits, you can create a temporary commit to store your staged files, stage your unstaged files and then stash them. Then, reset the temporary commit and pop your stash.
 
 ```sh
-$ git stash -k
-$ git reset --hard
-$ git stash pop
-$ git add -A
+$ git commit -m "WIP"
+$ git add . # This will also add untracked files.
+$ git stash
+$ git reset HEAD^
+$ git stash pop --index 0
 ```
+
+NOTE 1: The reason to use `pop` here is want to keep idempotent as much as possible.
+NOTE 2: Your staged files will be marked as unstaged if you don't use the `--index` flag. ([This link](https://stackoverflow.com/questions/31595873/git-stash-with-staged-files-does-stash-convert-staged-files-to-unstaged?answertab=active#tab-top) explains why.)
 
 ## Unstaged Edits
 
@@ -511,6 +758,17 @@ When you want to get rid of all of your untracked files
 ```sh
 $ git clean -f
 ```
+
+<a href="I-want-to-unstage-specific-staged-file"></a>
+### I want to unstage a specific staged file
+
+Sometimes we have one or more files that accidentally ended up being staged, and these files have not been committed before. To unstage them:
+
+```sh
+$ git reset -- <filename>
+```
+
+This results in unstaging the file and make it look like it's untracked.
 
 ## Branches
 
@@ -843,6 +1101,11 @@ To rename a different (local) branch:
 ```sh
 (master)$ git branch -m old-name new-name
 ```
+ To delete the `old-name` remote branch and push the `new-name` local branch:
+ 
+ ```sh
+ (master)$ git push origin :old_name new_name
+ ```
 
 <a name="i-want-to-checkout-to-a-remote-branch-that-someone-else-is-working-on"></a>
 ### I want to checkout to a remote branch that someone else is working on
@@ -1217,6 +1480,12 @@ $ git stash push working-directory-path/filename1.ext working-directory-path/fil
 $ git stash save <message>
 ```
 
+or
+
+```sh
+$ git stash push -m <message>
+```
+
 <a name="stash-apply-specific"></a>
 ### Apply a specific stash from list
 
@@ -1233,6 +1502,22 @@ $ git stash apply "stash@{n}"
 ```
 
 Here, 'n' indicates the position of the stash in the stack. The topmost stash will be position 0.
+
+Furthermore, using a time-based stash reference is also possible.
+
+```sh
+$ git stash apply "stash@{2.hours.ago}"
+```
+
+<a name="stage-and-keep-unstaged"></a>
+### Stash while keeping unstaged edits
+
+You can manually create a `stash commit`, and then use `git stash store`.
+
+```sh
+$ git stash create
+$ git stash store -m <message> CREATED_SHA1
+```
 
 ## Finding
 
@@ -1284,6 +1569,17 @@ While using wildcards, it's useful to inform `--name-status` to see the list of 
 $ git log --name-status -- **/*.js
 ```
 
+<a name="#i-want-to-view-the-commit-history-for-a-specific-function"></a>
+### I want to view the commit history for a specific function
+
+To trace the evolution of a single function you can use:
+
+```sh
+$ git log -L :FunctionName:FilePath
+```
+
+Note that you can combine this with further `git log` options, like [revision ranges](https://git-scm.com/docs/gitrevisions) and [commit limits](https://git-scm.com/docs/git-log/#_commit_limiting).
+
 ### Find a tag where a commit is referenced
 
 To find all tags containing a specific commit:
@@ -1320,6 +1616,12 @@ $ rm -rf .git/modules/submodulename
 ```
 
 ## Miscellaneous Objects
+
+### Copy a folder or file from one branch to another
+
+```sh
+$ git checkout <branch-you-want-the-directory-from> -- <folder-name or file-name>
+```
 
 ### Restore a deleted file
 
@@ -1361,7 +1663,7 @@ Your tag should now have been restored.
 
 ### Deleted Patch
 
-If someone has sent you a pull request on GitHub, but then deleted their original fork, you will be unable to clone their repository or to use `git am` as the [.diff, .patch](https://github.com/blog/967-github-secrets) urls become unavailable. But you can checkout the PR itself using [GitHub's special refs](https://gist.github.com/piscisaureus/3342247). To fetch the content of PR#1 into a new branch called pr_1:
+If someone has sent you a pull request on GitHub, but then deleted their original fork, you will be unable to clone their repository or to use `git am` as the [.diff, .patch](https://github.com/blog/967-github-secrets) URLs become unavailable. But you can checkout the PR itself using [GitHub's special refs](https://gist.github.com/piscisaureus/3342247). To fetch the content of PR#1 into a new branch called pr_1:
 
 ```sh
 $ git fetch origin refs/pull/1/head:pr_1
@@ -1461,6 +1763,39 @@ Note that this does *not* remove the file from source control - it is only ignor
 $ git update-index --no-assume-unchanged file-to-stop-ignoring
 ```
 
+## Debugging with Git
+
+The [git-bisect](https://git-scm.com/docs/git-bisect) command uses a binary search to find which commit in your Git history introduced a bug.
+
+Suppose you're on the `master` branch, and you want to find the commit that broke some feature. You start bisect:
+
+```sh
+$ git bisect start
+```
+
+Then you should specify which commit is bad, and which one is known to be good. Assuming that your *current* version is bad, and `v1.1.1` is good:
+
+```sh
+$ git bisect bad
+$ git bisect good v1.1.1
+```
+
+Now `git-bisect` selects a commit in the middle of the range that you specified, checks it out, and asks you whether it's good or bad. You should see something like:
+
+```sh
+$ Bisecting: 5 revision left to test after this (roughly 5 step)
+$ [c44abbbee29cb93d8499283101fe7c8d9d97f0fe] Commit message
+$ (c44abbb)$
+```
+
+You will now check if this commit is good or bad. If it's good:
+
+```sh
+$ (c44abbb)$ git bisect good
+```
+
+and `git-bisect` will select another commit from the range for you. This process (selecting `good` or `bad`) will repeat until there are no more revisions left to inspect, and the command will finally print a description of the **first** bad commit.
+
 ## Configuration
 
 ### I want to add aliases for some Git commands
@@ -1490,6 +1825,8 @@ On OS X and Linux, your git configuration file is stored in ```~/.gitconfig```. 
     wc = whatchanged
     wip = rebase -i @{u}
     zap = fetch -p
+    day = log --reverse --no-merges --branches=* --date=local --since=midnight --author=\"$(git config --get user.name)\"
+    delete-merged-branches = "!f() { git checkout --quiet master && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
 ```
 
 ### I want to add an empty directory to my repository
@@ -1514,7 +1851,7 @@ You can also name the file as just .keep , in which case the second line above w
 
 ### I want to cache a username and password for a repository
 
-You might have a repository that requires authentication.  In which case you can cache a username and password so you don't have to enter it on every push / pull. Credential helper can do this for you.
+You might have a repository that requires authentication.  In which case you can cache a username and password so you don't have to enter it on every push and pull. Credential helper can do this for you.
 
 ```sh
 $ git config --global credential.helper cache
@@ -1525,6 +1862,31 @@ $ git config --global credential.helper cache
 $ git config --global credential.helper 'cache --timeout=3600'
 # Set the cache to timeout after 1 hour (setting is in seconds)
 ```
+To find a credential helper:
+
+```sh
+$ git help -a | grep credential
+# Shows you possible credential helpers
+```
+
+For OS specific credential caching:
+
+```sh
+$ git config --global credential.helper osxkeychain
+# For OSX
+```
+
+```sh
+$ git config --global credential.helper manager
+# Git for Windows 2.7.3+
+```
+
+```sh
+$ git config --global credential.helper gnome-keyring
+# Ubuntu and other GNOME-based distros
+```
+
+More credential helpers can likely be found for different distributions and operating systems.
 
 ### I want to make Git ignore permissions and filemode changes
 
@@ -1585,6 +1947,35 @@ Using `git reset` it is then possible to change master back to the commit it was
 
 (copied and edited from [Source](https://www.atlassian.com/git/tutorials/rewriting-history/git-reflog)).
 
+<a name="git-shortcuts"></a>
+## Git Shortcuts
+
+### Git Bash
+
+Once you're comfortable with what the above commands are doing, you might want to create some shortcuts for Git Bash. This allows you to work a lot faster by doing complex tasks in really short commands.
+
+```sh
+alias sq=squash
+
+function squash() {
+    git rebase -i HEAD~$1
+}
+```
+
+Copy those commands to your .bashrc or .bash_profile.
+
+### PowerShell on Windows
+
+If you are using PowerShell on Windows, you can also set up aliases and functions. Add these commands to your profile, whose path is defined in the `$profile` variable. Learn more at the [About Profiles](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles) page on the Microsoft documentation site.
+
+```powershell
+Set-Alias sq Squash-Commits
+
+function Squash-Commits {
+  git rebase -i HEAD~$1
+}
+```
+
 # Other Resources
 
 ## Books
@@ -1592,6 +1983,7 @@ Using `git reset` it is then possible to change master back to the commit it was
 * [Learn Enough Git to Be Dangerous](https://www.learnenough.com/git-tutorial) - A book by Michael Hartl covering Git from basics
 * [Pro Git](https://git-scm.com/book/en/v2) - Scott Chacon and Ben Straub's excellent book about Git
 * [Git Internals](https://github.com/pluralsight/git-internals-pdf) - Scott Chacon's other excellent book about Git
+* [Nasa handbook](https://www.nasa.gov/sites/default/files/atoms/files/nasa_systems_engineering_handbook.pdf)
 
 ## Tutorials
 
@@ -1604,6 +1996,7 @@ Using `git reset` it is then possible to change master back to the commit it was
 * [git-workflow](https://github.com/asmeurer/git-workflow) - [Aaron Meurer](https://github.com/asmeurer)'s howto on using Git to contribute to open source repositories
 * [GitHub as a workflow](https://hugogiraudel.com/2015/08/13/github-as-a-workflow/) - An interesting take on using GitHub as a workflow, particularly with empty PRs
 * [Githug](https://github.com/Gazler/githug) - A game to learn more common Git workflows
+* [learnGitBranching](https://github.com/pcottle/learnGitBranching) - An interactive git visualization to challenge and educate!
 
 ## Scripts and Tools
 

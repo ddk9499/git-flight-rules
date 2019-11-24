@@ -1,11 +1,11 @@
 # Reglas de vuelo para git
 
 🌍
-*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)*
+*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)  ∙  [Tiếng Việt](README_vi.md) ∙ [Français](README_fr.md)*
 
 #### ¿Qué son "reglas de vuelo"?
 
-Una [guía para astronautas](http://www.jsc.nasa.gov/news/columbia/fr_generic.pdf) (ahora, programadores usando git) acerca de qué hacer cuando las cosas van mal.
+Una guía para astronautas (ahora, programadores usando git) acerca de qué hacer cuando las cosas van mal.
 
 >  *Las reglas de vuelo* son los conocimientos adquiridos con tanto esfuerzo en manuales que enumeran, paso a paso, qué hacer si ocurre X y por qué. Básicamente, son procedimientos operativos extremadamente detallados y específicos de cada escenario. [...]
 
@@ -156,12 +156,12 @@ $ git log -n1 -p
 Si escribiste algo mal y todavía no has subido tu commit, puedes hacer lo siguiente para cambiar el mensaje del commit:
 
 ```sh
-$ git commit --amend
+$ git commit --amend --only
 ```
 Esto abrirá tu editor de texto por defecto, donde puedes editar el mensaje. Por otro lado, tú puedes hacer todo esto con un solo comando:
 
 ```sh
-$ git commit --amend -m 'xxxxxxx'
+$ git commit --amend --only -m 'xxxxxxx'
 ```
 
 Si ya has subido tu commit, puedes corregirlo usando amend y luego forzar el push, pero esto no es recomendado.

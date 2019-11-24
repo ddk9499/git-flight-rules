@@ -1,11 +1,11 @@
 # 깃을 위한 flight rules
 
 🌍
-*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)*
+*[English](README.md) ∙ [Español](README_es.md)  ∙  [Русский](README_ru.md) ∙ [简体中文](README_zh-CN.md)∙ [한국어](README_kr.md)  ∙  [Tiếng Việt](README_vi.md) ∙ [Français](README_fr.md)*
 
 #### flight rules 가 뭐야?
 
-뭔가 잘못 됐을 때 뭘 해야할지에 대한 [우주비행사를 위한 가이드](https://www.jsc.nasa.gov/news/columbia/fr_generic.pdf) (여기선 깃을 쓰는 개발자를 위한) 
+뭔가 잘못 됐을 때 뭘 해야할지에 대한 우주비행사를 위한 가이드 (여기선 깃을 쓰는 개발자를 위한) 
 
 
 >  *Flight Rules* 는 어떤 문제 X가 발생한 이유와 그 단계의 매뉴얼에서 어렵사리 얻은 지식이에요. 기본적으로 각 시나리오의 매우 자세하고 구체적인 운영 절차랍니다. [...]
@@ -109,8 +109,8 @@
     - [레파지토리에 빈 디렉토리를 추가하고 싶어](#%EB%A0%88%ED%8C%8C%EC%A7%80%ED%86%A0%EB%A6%AC%EC%97%90-%EB%B9%88-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC%EB%A5%BC-%EC%B6%94%EA%B0%80%ED%95%98%EA%B3%A0-%EC%8B%B6%EC%96%B4)
     - [레파지토리 유저명과 비밀번호를 캐시해두고 싶어](#%EB%A0%88%ED%8C%8C%EC%A7%80%ED%86%A0%EB%A6%AC-%EC%9C%A0%EC%A0%80%EB%AA%85%EA%B3%BC-%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8%EB%A5%BC-%EC%BA%90%EC%8B%9C%ED%95%B4%EB%91%90%EA%B3%A0-%EC%8B%B6%EC%96%B4)
     - [깃이 권한과 파일모드 변경을 무시하게 만들고 싶어](#%EA%B9%83%EC%9D%B4-%EA%B6%8C%ED%95%9C%EA%B3%BC-%ED%8C%8C%EC%9D%BC%EB%AA%A8%EB%93%9C-%EB%B3%80%EA%B2%BD%EC%9D%84-%EB%AC%B4%EC%8B%9C%ED%95%98%EA%B2%8C-%EB%A7%8C%EB%93%A4%EA%B3%A0-%EC%8B%B6%EC%96%B4)
-    - [글로버 유저로 설정해두고 싶어](#%EA%B8%80%EB%A1%9C%EB%B2%84-%EC%9C%A0%EC%A0%80%EB%A1%9C-%EC%84%A4%EC%A0%95%ED%95%B4%EB%91%90%EA%B3%A0-%EC%8B%B6%EC%96%B4)
-    - [깃에 명령어 색상을을 넣고 싶어](#%EA%B9%83%EC%97%90-%EB%AA%85%EB%A0%B9%EC%96%B4-%EC%83%89%EC%83%81%EC%9D%84%EC%9D%84-%EB%84%A3%EA%B3%A0-%EC%8B%B6%EC%96%B4)
+    - [글로벌 유저로 설정해두고 싶어](#%EA%B8%80%EB%A1%9C%EB%B2%8C-%EC%9C%A0%EC%A0%80%EB%A1%9C-%EC%84%A4%EC%A0%95%ED%95%B4%EB%91%90%EA%B3%A0-%EC%8B%B6%EC%96%B4)
+    - [깃에 명령어 색상을 넣고 싶어](#%EA%B9%83%EC%97%90-%EB%AA%85%EB%A0%B9%EC%96%B4-%EC%83%89%EC%83%81%EC%9D%84-%EB%84%A3%EA%B3%A0-%EC%8B%B6%EC%96%B4)
   - [뭘 잘못했는지 모르겠어](#%EB%AD%98-%EC%9E%98%EB%AA%BB%ED%96%88%EB%8A%94%EC%A7%80-%EB%AA%A8%EB%A5%B4%EA%B2%A0%EC%96%B4)
 - [다른 리소스](#%EB%8B%A4%EB%A5%B8-%EB%A6%AC%EC%86%8C%EC%8A%A4)
   - [도서](#%EB%8F%84%EC%84%9C)
@@ -178,13 +178,13 @@ $ git show <commitid>:filename
 만약 메시지를 잘못 썼고 아직 푸시를 안했다면, 커밋 메시지 바꾸기를 따라해 볼 수 있어요.
 
 ```sh
-$ git commit --amend
+$ git commit --amend --only
 ```
 
 이 방법은 편집 가능한 기본 텍스트 에디터가 열릴텐데요, 다른 방법으론 한줄에 쓸 수도 있어요.
 
 ```sh
-$ git commit --amend -m 'xxxxxxx'
+$ git commit --amend --only -m 'xxxxxxx'
 ```
 
 만약 푸시를 이미 했다면, 커밋을 수정해서 강제 푸시를 할 수 있긴한대 별로 추천하진 않아요.
@@ -1495,7 +1495,7 @@ $ git config core.fileMode false
 $ git config --global core.fileMode false
 ```
 
-### 글로버 유저로 설정해두고 싶어
+### 글로벌 유저로 설정해두고 싶어
 
 모든 로컬 레파지토리에 사용되는 유저 정보를 설정하려면, 그리고 버전 이력을 리뷰할때 알아보기 쉬운 이름으로 설정하려면: 
 
@@ -1509,7 +1509,7 @@ $ git config --global user.name “[firstname lastname]”
 git config --global user.email “[valid-email]”
 ```
 
-### 깃에 명령어 색상을을 넣고 싶어
+### 깃에 명령어 색상을 넣고 싶어
 
 손 쉬운 리뷰를 위한 깃 명령줄 자동 색상을 설정 하려면:
 
